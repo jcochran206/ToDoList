@@ -6,14 +6,17 @@ const app = express();
 
 const port = 3000;
 
+app.set('view engine', 'ejs');
+
 app.get("/", function(req, res){
 
   var today = new Date();
+  var currentDay = today.getDay();
 
-  if(today.getDay() === 6 || today.getDay() === 0){
-    res.send("Yay its the weekend");
+  if(currentDay === 6 || currentDay === 0){
+    res.send(`Yay its the weekend and app is running on ${port}`);
   }else{
-    res.send(`not the weekend ${port}`);
+    res.send(__dirname + 'index.html');
   }
 });
 
