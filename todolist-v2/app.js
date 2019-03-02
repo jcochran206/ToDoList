@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
+const myModel = require(__dirname + "/config.js");
 
 
 
@@ -14,8 +15,15 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-//create new connection to mongodb & mongoose
-mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
+const myAtlasKey = myModel.passData.mykey;
+const myAdminuser = myModel.passData.admin;
+
+
+//create new connection to mongodb & mongoose local
+//mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
+
+//use external database
+mongoose.connect(`mongodb+srv://${myAdminuser}:${myAtlasKey}@cluster0-i8jc9.mongodb.net/todolistDB`, {useNewUrlParser: true});
 
 //create a new item schema for workItems
 const itemSchema = {
@@ -120,7 +128,7 @@ app.post('/delete', function(req, res){
       }
     });
   }else{
-    List.findOneAndUpdate({name: listName}, {$pull {items: {_id: checkedItemId}}}, function(err,foundList){
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err,foundList){
       if(!err){
         res.redirect("/" + listName);
       }
